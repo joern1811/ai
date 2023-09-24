@@ -19,7 +19,7 @@ The AI command line tool is a utility that helps transcribe audio files and gene
 You can easily install the AI tool using Homebrew:
 
 ```bash
-brew tap domjoe1811/ai
+brew tap joern1811/tap
 brew install ai
 ```
 ## Usage
@@ -61,7 +61,7 @@ To install the AI tool via Homebrew, follow these steps:
 2. Tap into the repository containing the AI tool:
 
 ```bash
-brew tap domjoe1811/ai
+brew tap joern1811/tap
 ```
 3. Install the tool:
     
