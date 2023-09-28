@@ -13,7 +13,6 @@ var speachSummarizeCmd = &cobra.Command{
 	Use:                   "summarize",
 	Short:                 "Tool to summarize text- or audio-files",
 	DisableFlagsInUseLine: true,
-	Args:                  cobra.MatchAll(cobra.ExactArgs(1)),
 	Run: func(cmd *cobra.Command, args []string) {
 		err := viper.Unmarshal(&appConfig)
 		cobra.CheckErr(err)

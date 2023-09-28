@@ -12,7 +12,6 @@ var speachTranscriptCmd = &cobra.Command{
 	Use:                   "transcript",
 	Short:                 "Tool to transcript audio files",
 	DisableFlagsInUseLine: true,
-	Args:                  cobra.MatchAll(cobra.ExactArgs(1)),
 	Run: func(cmd *cobra.Command, args []string) {
 		err := viper.Unmarshal(&appConfig)
 		cobra.CheckErr(err)
