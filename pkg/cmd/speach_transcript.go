@@ -16,7 +16,7 @@ var speachTranscriptCmd = &cobra.Command{
 		err := viper.Unmarshal(&appConfig)
 		cobra.CheckErr(err)
 
-		inputPath := viper.GetString("input")
+		inputPath := cmd.Flags().Lookup("input").Value.String()
 		if inputPath == "" {
 			fmt.Println("Please provide an input file")
 			os.Exit(1)
@@ -26,7 +26,7 @@ var speachTranscriptCmd = &cobra.Command{
 		transcript, err := speachService.Transcript(inputPath)
 		cobra.CheckErr(err)
 
-		outputPath := viper.GetString("output")
+		outputPath := cmd.Flags().Lookup("output").Value.String()
 		if outputPath != "" {
 			err = os.WriteFile(outputPath, []byte(transcript), 0644)
 			cobra.CheckErr(err)

@@ -52,7 +52,6 @@ func initConfig() {
 	}
 
 	viper.AutomaticEnv() // read in Environment variables that match
-	log.Printf("The config file is placed under %v", viper.ConfigFileUsed())
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err != nil {

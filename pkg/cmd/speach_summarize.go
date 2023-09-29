@@ -19,7 +19,7 @@ var speachSummarizeCmd = &cobra.Command{
 
 		speachService := service.NewSpeachService(appConfig.OpenAIConfig.OpenAIAuthToken, appConfig.PromptConfig)
 
-		inputPath := viper.GetString("input")
+		inputPath := cmd.Flags().Lookup("input").Value.String()
 		if inputPath == "" {
 			fmt.Println("Please provide an input file")
 			os.Exit(1)
@@ -41,7 +41,7 @@ var speachSummarizeCmd = &cobra.Command{
 			cobra.CheckErr(err)
 			summary, err = speachService.SummarizeText(string(text))
 		}
-		outputPath := viper.GetString("output")
+		outputPath := cmd.Flags().Lookup("output").Value.String()
 		if outputPath != "" {
 			err = os.WriteFile(outputPath, []byte(summary), 0644)
 			cobra.CheckErr(err)
