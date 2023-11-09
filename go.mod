@@ -4,8 +4,8 @@ go 1.20
 
 require (
 	github.com/h2non/filetype v1.1.3
-	github.com/sashabaranov/go-openai v1.15.4
-	github.com/spf13/cobra v1.7.0
+	github.com/sashabaranov/go-openai v1.17.4
+	github.com/spf13/cobra v1.8.0
 	github.com/spf13/viper v1.17.0
 )
 
