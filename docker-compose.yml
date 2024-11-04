@@ -1,0 +1,14 @@
+
+services:
+  ai:
+    container_name: ai
+    image: ghcr.io/joern1811/ai:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - OPEN_AI_AUTH_TOKEN=${OPEN_AI_AUTH_TOKEN}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
+      - API_TOKEN=${API_TOKEN}
+    env_file:
+      - .env

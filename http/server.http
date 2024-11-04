@@ -1,0 +1,13 @@
+POST http://localhost:8080/upload
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+Authorization: Bearer {{api-token}}
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="AUDIO-2024-11-03-09-59-57.m4a"
+
+< ../uploads/AUDIO-2024-11-03-09-59-57.m4a
+--WebAppBoundary--
+
+###
+
+

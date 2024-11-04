@@ -1,0 +1,11 @@
+GET https://api.telegram.org/bot{{summarize-bot-token}}/getUpdates
+Accept: application/json
+
+###
+POST https://api.telegram.org/bot{{summarize-bot-token}}/sendMessage
+Content-Type: application/json
+
+{
+  "chat_id": {{summarize-chat-id}},
+  "text": "Hello, world!"
+}

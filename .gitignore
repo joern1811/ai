@@ -104,3 +104,8 @@ go.work
 ai.json
 testdata
 .idea
+/uploads/
+/http/http-client.private.env.json
+.env
+/dist/
+/completions/

@@ -24,8 +24,14 @@ jobs:
       - name: Setup go
         uses: actions/setup-go@v5
         with:
-          go-version: '>=1.20.2'
+          go-version: '>=1.23.2'
           cache: true
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Release
         uses: goreleaser/goreleaser-action@v6
         with:
@@ -33,5 +39,5 @@ jobs:
           distribution: goreleaser
           version: latest
           args: release --clean
-        env:
-          GITHUB_TOKEN: ${{ secrets.GORELEASER_AI }}
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GORELEASER_AI }}

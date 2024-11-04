@@ -1,3 +1,4 @@
+version: 2
 # This is an example .goreleaser.yml file with some sensible defaults.
 # Make sure to check the documentation at https://goreleaser.com
 before:
@@ -8,7 +9,8 @@ before:
     #- go generate ./...
     - ./scripts/completions.sh
 builds:
-  - main: ./cmd/
+  - id: cli
+    main: ./cmd/cli
     binary: ai
     env:
       - CGO_ENABLED=0
@@ -21,8 +23,20 @@ builds:
         -X github.com/joern1811/ai/internal/version.Version={{ .Version }}
         -X github.com/joern1811/ai/internal/version.GitCommit={{ .FullCommit }}
         -X github.com/joern1811/ai/internal/version.BuildDate={{ .Date }}
+  - id: rest
+    main: ./cmd/rest
+    binary: ai-server
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+    goarch:
+      - amd64
 archives:
-  - name_template: >-
+  - id: cli
+    builds:
+      - cli
+    name_template: >-
       {{ .ProjectName }}_
       {{- title .Os }}_
       {{- if eq .Arch "amd64" }}x86_64
@@ -30,10 +44,19 @@ archives:
       {{- else }}{{ .Arch }}{{ end }}
     files:
      - completions/*
+  - id: rest
+    builds:
+      - rest
+    name_template: >-
+      {{ .Binary }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
 checksum:
   name_template: 'checksums.txt'
 snapshot:
-  name_template: "{{ incpatch .Version }}-next"
+  version_template: "{{ incpatch .Version }}-next"
 changelog:
   sort: asc
   filters:
@@ -43,8 +66,10 @@ changelog:
 # .goreleaser.yaml
 brews:
   - name: ai
+    ids:
+      - cli
     # GitHub/GitLab repository to push the formula to
-    tap:
+    repository:
       owner: joern1811
       name: homebrew-tap
 
@@ -68,7 +93,7 @@ brews:
 
     # Folder inside the repository to put the formula.
     # Default is the root folder.
-    folder: Formula
+    directory: Formula
 
     # Your app's homepage.
     # Default is empty.
@@ -88,6 +113,20 @@ brews:
       zsh_completion.install "completions/ai.zsh" => "_ai"
       fish_completion.install "completions/ai.fish"
 
+dockers:
+  - id: rest
+    ids:
+      - rest
+    image_templates:
+      - "ghcr.io/joern1811/ai:{{ .Tag }}"
+      - "ghcr.io/joern1811/ai:latest"
+    build_flag_templates:
+      - "--pull"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.name={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+      - "--label=org.opencontainers.image.source={{.GitURL}}"
 
 # modelines, feel free to remove those if you don't want/use them:
 # yaml-language-server: $schema=https://goreleaser.com/static/schema.json

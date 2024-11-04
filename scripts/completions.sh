@@ -5,5 +5,5 @@ rm -rf completions
 mkdir completions
 
 for sh in bash zsh fish; do
-	go run cmd/main.go completion "$sh" >"completions/ai.$sh"
+	go run cmd/cli/main.go completion "$sh" >"completions/ai.$sh"
 done
