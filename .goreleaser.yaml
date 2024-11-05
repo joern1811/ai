@@ -1,12 +1,7 @@
 version: 2
-# This is an example .goreleaser.yml file with some sensible defaults.
-# Make sure to check the documentation at https://goreleaser.com
 before:
   hooks:
-    # You may remove this if you don't use go modules.
     - go mod tidy
-    # you may remove this if you don't need go generate
-    #- go generate ./...
     - ./scripts/completions.sh
 builds:
   - id: cli
@@ -18,6 +13,9 @@ builds:
       - linux
       - windows
       - darwin
+    goarch:
+      - amd64
+      - arm64
     ldflags:
       - -w -s
         -X github.com/joern1811/ai/internal/version.Version={{ .Version }}
@@ -32,6 +30,7 @@ builds:
       - linux
     goarch:
       - amd64
+      - arm64
 archives:
   - id: cli
     builds:
@@ -43,7 +42,7 @@ archives:
       {{- else if eq .Arch "386" }}i386
       {{- else }}{{ .Arch }}{{ end }}
     files:
-     - completions/*
+      - completions/*
   - id: rest
     builds:
       - rest
@@ -63,50 +62,20 @@ changelog:
     exclude:
       - '^docs:'
       - '^test:'
-# .goreleaser.yaml
 brews:
   - name: ai
     ids:
       - cli
-    # GitHub/GitLab repository to push the formula to
     repository:
       owner: joern1811
       name: homebrew-tap
-
-    # Allows you to set a custom download strategy. Note that you'll need
-    # to implement the strategy and add it to your tap repository.
-    # Example: https://docs.brew.sh/Formula-Cookbook#specifying-the-download-strategy-explicitly
-    # Default is empty.
-    download_strategy: CurlDownloadStrategy
-
-    # Allows you to add a custom require_relative at the top of the formula template
-    #custom_require: "lib/custom_download_strategy"
-
-    # Git author used to commit to the repository.
-    # Defaults are shown.
     commit_author:
       name: Jörn Dombrowski
       email: joern.dombrowski@gmail.com
-
-    # The project name and current git tag are used in the format string.
     commit_msg_template: "Brew formula update for {{ .ProjectName }} version {{ .Tag }}"
-
-    # Folder inside the repository to put the formula.
-    # Default is the root folder.
     directory: Formula
-
-    # Your app's homepage.
-    # Default is empty.
     homepage: "https://github.com/joern1811/ai"
-
-    # Template of your app's description.
-    # Default is empty.
-    description: ""
-
-    # SPDX identifier of your app's license.
-    # Default is empty.
     license: "Apache-2.0"
-
     install: |-
       bin.install "ai"
       bash_completion.install "completions/ai.bash" => "ai"
@@ -114,20 +83,45 @@ brews:
       fish_completion.install "completions/ai.fish"
 
 dockers:
-  - id: rest
+  - id: rest_amd64
     ids:
       - rest
+    goarch: amd64
     image_templates:
-      - "ghcr.io/joern1811/ai:{{ .Tag }}"
-      - "ghcr.io/joern1811/ai:latest"
+      - "ghcr.io/joern1811/ai:{{ .Version }}-amd64"
+    dockerfile: Dockerfile
+    use: buildx
     build_flag_templates:
-      - "--pull"
-      - "--label=org.opencontainers.image.created={{.Date}}"
-      - "--label=org.opencontainers.image.name={{.ProjectName}}"
-      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
-      - "--label=org.opencontainers.image.version={{.Version}}"
-      - "--label=org.opencontainers.image.source={{.GitURL}}"
+      - --platform=linux/amd64
+      - --pull
+      - --label=org.opencontainers.image.created={{.Date}}
+      - --label=org.opencontainers.image.name={{.ProjectName}}
+      - --label=org.opencontainers.image.revision={{.FullCommit}}
+      - --label=org.opencontainers.image.version={{.Version}}
+      - --label=org.opencontainers.image.source={{.GitURL}}
+  - id: rest_arm64
+    ids:
+      - rest
+    goarch: arm64
+    image_templates:
+      - "ghcr.io/joern1811/ai:{{ .Version }}-arm64v8"
+    dockerfile: Dockerfile
+    use: buildx
+    build_flag_templates:
+      - --platform=linux/arm64/v8
+      - --pull
+      - --label=org.opencontainers.image.created={{.Date}}
+      - --label=org.opencontainers.image.name={{.ProjectName}}
+      - --label=org.opencontainers.image.revision={{.FullCommit}}
+      - --label=org.opencontainers.image.version={{.Version}}
+      - --label=org.opencontainers.image.source={{.GitURL}}
 
-# modelines, feel free to remove those if you don't want/use them:
-# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
-# vim: set ts=2 sw=2 tw=0 fo=cnqoj
+docker_manifests:
+  - name_template: "ghcr.io/joern1811/ai:{{ .Version }}"
+    image_templates:
+      - "ghcr.io/joern1811/ai:{{ .Version }}-amd64"
+      - "ghcr.io/joern1811/ai:{{ .Version }}-arm64v8"
+  - name_template: "ghcr.io/joern1811/ai:latest"
+    image_templates:
+      - "ghcr.io/joern1811/ai:{{ .Version }}-amd64"
+      - "ghcr.io/joern1811/ai:{{ .Version }}-arm64v8"
