@@ -109,3 +109,4 @@ testdata
 .env
 /dist/
 /completions/
+/inputs/
