@@ -80,7 +80,7 @@ func (srv Server) uploadHandler(w http.ResponseWriter, r *http.Request) {
 	go srv.processSummary(filePath)
 
 	// Erfolgsnachricht zurücksenden
-	_, _ = fmt.Fprintf(w, "Datei %s wurde erfolgreich hochgeladen", fileName)
+	_, _ = fmt.Print(w, "OK")
 }
 
 func (srv Server) processSummary(filePath string) {
