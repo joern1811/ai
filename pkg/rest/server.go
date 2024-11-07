@@ -56,9 +56,11 @@ func (srv Server) uploadHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Extrahieren des Dateinamens aus der URL
 	fileName := r.URL.Path[len("/upload/"):]
+	log.Printf("Datei %s wird hochgeladen...", fileName)
 
 	// Datei aus dem Request extrahieren
 	filePath := "./uploads/" + fileName
+	log.Printf("Datei wird gespeichert unter %s", filePath)
 	outFile, err := os.Create(filePath)
 	if err != nil {
 		log.Println(err)
@@ -78,18 +80,19 @@ func (srv Server) uploadHandler(w http.ResponseWriter, r *http.Request) {
 	go srv.processSummary(filePath)
 
 	// Erfolgsnachricht zurücksenden
-	fmt.Fprintf(w, "Datei %s wurde erfolgreich hochgeladen", fileName)
+	_, _ = fmt.Fprintf(w, "Datei %s wurde erfolgreich hochgeladen", fileName)
 }
 
 func (srv Server) processSummary(filePath string) {
+	log.Printf("Zusammenfassung für Datei %s wird erstellt...", filePath)
 	summary, err := srv.speachService.SummarizeAudio(filePath)
 	if err != nil {
-		log.Println(err)
+		log.Printf("Fehler beim Erstellen der Zusammenfassung: %s", err)
 		return
 	}
 	err = srv.notifyAdapter.Notify(summary)
 	if err != nil {
-		log.Println(err)
+		log.Printf("Fehler beim Senden der Benachrichtigung: %s", err)
 		return
 	}
 }
