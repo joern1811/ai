@@ -41,7 +41,7 @@ func (s *SpeachService) Ask(text string) (string, error) {
 	resp, err := s.client.CreateChatCompletion(
 		context.Background(),
 		openai.ChatCompletionRequest{
-			Model:    openai.GPT4o,
+			Model:    openai.GPT4Turbo,
 			Messages: messages,
 		},
 	)
