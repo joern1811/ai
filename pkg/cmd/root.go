@@ -3,10 +3,12 @@ package cmd
 import (
 	"fmt"
 	"github.com/joern1811/ai/pkg/config"
+	_ "github.com/joho/godotenv"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"log"
 	"os"
+	"path/filepath"
+	"strings"
 )
 
 const (
@@ -33,28 +35,45 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", fmt.Sprintf("config file (default $HOME/.%v)", baseAppName))
+	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", fmt.Sprintf("config file (default $HOME/.config/.%v/config)", baseAppName))
 }
 
 func initConfig() {
 
 	if cfgFile != "" {
-		// Use config file from the flag.
+		// Verwende Config-Datei vom Flag
 		viper.SetConfigFile(cfgFile)
 	} else {
-		// Find home directory.
-		home, err := os.UserHomeDir()
-		cobra.CheckErr(err)
+		// Bestimme Config-Verzeichnis nach XDG Base Directory
+		configHome := os.Getenv("XDG_CONFIG_HOME")
+		if configHome == "" {
+			// Fallback: ~/.config
+			home, err := os.UserHomeDir()
+			cobra.CheckErr(err)
+			configHome = filepath.Join(home, ".config")
+		}
 
-		viper.AddConfigPath(home)
+		// Unterverzeichnis für die Anwendung in XDG_CONFIG_HOME
+		configDir := filepath.Join(configHome, baseAppName)
+
+		// Erstelle den Unterordner, falls er nicht existiert
+		if _, err := os.Stat(configDir); os.IsNotExist(err) {
+			err = os.MkdirAll(configDir, 0755)
+			cobra.CheckErr(err)
+		}
+
+		// Viper soll in diesem Verzeichnis nach der Datei "config.json" suchen
+		viper.AddConfigPath(configDir)
 		viper.SetConfigType("json")
-		viper.SetConfigName(fmt.Sprintf(".%v", baseAppName))
+		viper.SetConfigName("config")
 	}
 
-	viper.AutomaticEnv() // read in Environment variables that match
+	// Erlaube Environment-Variablen (ersetze '.' durch '_')
+	viper.SetEnvKeyReplacer(strings.NewReplacer(`.`, `_`))
+	viper.AutomaticEnv()
 
-	// If a config file is found, read it in.
+	// Falls eine Config-Datei gefunden wird, lese sie ein
 	if err := viper.ReadInConfig(); err != nil {
-		log.Printf("cannot read config file: %v because: %v", viper.ConfigFileUsed(), err)
+		_, _ = fmt.Fprintf(os.Stderr, "Fehler beim Einlesen der Config-Datei: %s\n", viper.ConfigFileUsed())
 	}
 }
