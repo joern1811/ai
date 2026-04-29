@@ -6,6 +6,9 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
+	"strings"
+	"time"
 
 	_ "github.com/joho/godotenv/autoload"
 
@@ -13,7 +16,15 @@ import (
 	"github.com/joern1811/ai/pkg/core/ports"
 	"github.com/joern1811/ai/pkg/core/service"
 	adapters "github.com/joern1811/ai/pkg/framework/adapters/notifiers"
+	"github.com/joern1811/ai/pkg/framework/adapters/utils"
 )
+
+const uploadDir = "./uploads"
+
+// sanitizeForLog strips newline characters to prevent log-injection.
+func sanitizeForLog(s string) string {
+	return strings.NewReplacer("\n", "", "\r", "").Replace(s)
+}
 
 type Server struct {
 	speachService *service.SpeachService
@@ -34,10 +45,20 @@ func NewServer() *Server {
 }
 
 func (srv Server) Start() {
-	http.HandleFunc("/upload/", srv.uploadHandler)
+	mux := http.NewServeMux()
+	mux.HandleFunc("/upload/", srv.uploadHandler)
+
+	server := &http.Server{
+		Addr:              ":8080",
+		Handler:           mux,
+		ReadHeaderTimeout: 5 * time.Second,
+		ReadTimeout:       60 * time.Second,
+		WriteTimeout:      60 * time.Second,
+		IdleTimeout:       120 * time.Second,
+	}
 
 	fmt.Println("Server startet auf Port 8080...")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(server.ListenAndServe())
 }
 
 // uploadHandler verarbeitet den Datei-Upload
@@ -56,37 +77,37 @@ func (srv Server) uploadHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Extrahieren des Dateinamens aus der URL
-	fileName := r.URL.Path[len("/upload/"):]
-	log.Printf("Datei %s wird hochgeladen...", fileName)
+	// Dateinamen aus der URL extrahieren — filepath.Base verhindert Path-Traversal
+	// (Eingaben wie "../etc/passwd" werden auf "passwd" reduziert).
+	fileName := filepath.Base(r.URL.Path[len("/upload/"):])
+	if fileName == "." || fileName == "/" || fileName == "" {
+		http.Error(w, "Ungültiger Dateiname", http.StatusBadRequest)
+		return
+	}
+	log.Printf("Datei %s wird hochgeladen...", sanitizeForLog(fileName)) //nolint:gosec // sanitizeForLog strips newlines
 
-	// Datei aus dem Request extrahieren
-	filePath := "./uploads/" + fileName
-	log.Printf("Datei wird gespeichert unter %s", filePath)
-	outFile, err := os.Create(filePath)
+	filePath := filepath.Join(uploadDir, fileName)
+	log.Printf("Datei wird gespeichert unter %s", sanitizeForLog(filePath)) //nolint:gosec // sanitizeForLog strips newlines
+	outFile, err := os.Create(filePath)                                     //nolint:gosec // filePath is constrained to uploadDir via filepath.Base
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Konnte Datei nicht speichern", http.StatusInternalServerError)
 		return
 	}
-	defer outFile.Close()
+	defer utils.CloseResource(outFile, &err)
 
-	// Kopiert den Dateiinhalt
-	_, err = io.Copy(outFile, r.Body)
-	if err != nil {
+	if _, err = io.Copy(outFile, r.Body); err != nil {
 		http.Error(w, "Fehler beim Speichern der Datei", http.StatusInternalServerError)
 		return
 	}
 
-	// async process summary
 	go srv.processSummary(filePath)
 
-	// Erfolgsnachricht zurücksenden
 	_, _ = fmt.Fprintf(w, "OK")
 }
 
 func (srv Server) processSummary(filePath string) {
-	log.Printf("Zusammenfassung für Datei %s wird erstellt...", filePath)
+	log.Printf("Zusammenfassung für Datei %s wird erstellt...", sanitizeForLog(filePath)) //nolint:gosec // sanitizeForLog strips newlines
 	summary, err := srv.speachService.SummarizeAudio(filePath)
 	if err != nil {
 		log.Printf("Fehler beim Erstellen der Zusammenfassung: %s", err)

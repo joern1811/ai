@@ -75,8 +75,8 @@ func initAssistants() (map[string]string, error) {
 		return availableAssistants, err
 	}
 
-	for _, assistant := range assistants {
-		availableAssistants[*assistant.Name] = assistant.ID
+	for i := range assistants {
+		availableAssistants[*assistants[i].Name] = assistants[i].ID
 	}
 
 	return availableAssistants, nil

@@ -56,11 +56,11 @@ func initConfig() {
 		}
 
 		// Unterverzeichnis für die Anwendung in XDG_CONFIG_HOME
-		configDir := filepath.Join(configHome, baseAppName)
+		configDir := filepath.Clean(filepath.Join(configHome, baseAppName))
 
 		// Erstelle den Unterordner, falls er nicht existiert
 		if _, err := os.Stat(configDir); os.IsNotExist(err) {
-			err = os.MkdirAll(configDir, 0755)
+			err = os.MkdirAll(configDir, 0o750)
 			cobra.CheckErr(err)
 		}
 

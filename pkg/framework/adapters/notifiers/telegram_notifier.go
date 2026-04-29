@@ -2,9 +2,11 @@ package adapters
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/joern1811/ai/pkg/framework/adapters/utils"
 )
@@ -32,7 +34,17 @@ func (t TelegramNotifier) Notify(message string) error {
 	if err != nil {
 		return err
 	}
-	resp, err := http.Post(url, "application/json", bytes.NewBuffer(bodyBytes))
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewBuffer(bodyBytes))
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := http.DefaultClient.Do(req) //nolint:bodyclose // closed via utils.CloseResource (bodyclose linter does not detect helper-based closures)
 	if err != nil {
 		return err
 	}

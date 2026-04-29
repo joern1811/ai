@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -30,7 +31,7 @@ var speachTranscriptCmd = &cobra.Command{
 
 		outputPath := cmd.Flags().Lookup("output").Value.String()
 		if outputPath != "" {
-			err = os.WriteFile(outputPath, []byte(transcript), 0644)
+			err = os.WriteFile(filepath.Clean(outputPath), []byte(transcript), 0o600)
 			cobra.CheckErr(err)
 		} else {
 			fmt.Println(transcript)

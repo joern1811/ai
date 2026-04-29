@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/h2non/filetype"
 	"github.com/spf13/cobra"
@@ -26,8 +27,9 @@ var speachSummarizeCmd = &cobra.Command{
 			fmt.Println("Please provide an input file")
 			os.Exit(1)
 		}
+		inputPath = filepath.Clean(inputPath)
 
-		file, err := os.Open(inputPath)
+		file, err := os.Open(inputPath) //nolint:gosec // inputPath comes from a CLI flag
 		cobra.CheckErr(err)
 
 		// We only have to pass the file header = first 261 bytes
@@ -39,13 +41,15 @@ var speachSummarizeCmd = &cobra.Command{
 		if filetype.IsAudio(head) {
 			summary, err = speachService.SummarizeAudio(inputPath)
 		} else {
-			text, err := os.ReadFile(inputPath)
-			cobra.CheckErr(err)
+			text, readErr := os.ReadFile(inputPath) //nolint:gosec // inputPath comes from a CLI flag
+			cobra.CheckErr(readErr)
 			summary, err = speachService.SummarizeText(string(text))
 		}
+		cobra.CheckErr(err)
+
 		outputPath := cmd.Flags().Lookup("output").Value.String()
 		if outputPath != "" {
-			err = os.WriteFile(outputPath, []byte(summary), 0644)
+			err = os.WriteFile(filepath.Clean(outputPath), []byte(summary), 0o600)
 			cobra.CheckErr(err)
 		} else {
 			fmt.Println(summary)

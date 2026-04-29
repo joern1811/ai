@@ -70,9 +70,9 @@ func (a *AssistantService) DetermineAssistantId(assistantName string) (string, e
 		log.Fatal(err)
 	}
 
-	for _, assistant := range assistants.Assistants {
-		if *assistant.Name == assistantName {
-			return assistant.ID, nil
+	for i := range assistants.Assistants {
+		if *assistants.Assistants[i].Name == assistantName {
+			return assistants.Assistants[i].ID, nil
 		}
 	}
 	return "", nil
