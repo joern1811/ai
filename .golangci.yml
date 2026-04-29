@@ -31,6 +31,8 @@ linters:
     # Test quality
     - testifylint       # validates testify usage patterns
     - usetesting        # use testing package helpers
+    # Architecture
+    - depguard          # enforces hexagonal architecture import rules
 
   settings:
     govet:
@@ -51,6 +53,42 @@ linters:
     misspell:
       ignore-rules:
         - speach
+    depguard:
+      rules:
+        domain-layer:
+          files:
+            - "**/pkg/core/domain/**"
+          deny:
+            - pkg: "github.com/joern1811/ai/pkg/core/service"
+              desc: "domain must not import the application layer (hexagonal architecture)"
+            - pkg: "github.com/joern1811/ai/pkg/framework"
+              desc: "domain must not import the framework/adapter layer (hexagonal architecture)"
+            - pkg: "github.com/joern1811/ai/pkg/rest"
+              desc: "domain must not import the REST adapter (hexagonal architecture)"
+            - pkg: "github.com/joern1811/ai/pkg/cmd"
+              desc: "domain must not import the CLI adapter (hexagonal architecture)"
+        ports-layer:
+          files:
+            - "**/pkg/core/ports/**"
+          deny:
+            - pkg: "github.com/joern1811/ai/pkg/core/service"
+              desc: "ports must not depend on the application layer (hexagonal architecture)"
+            - pkg: "github.com/joern1811/ai/pkg/framework"
+              desc: "ports must not import the framework/adapter layer (hexagonal architecture)"
+            - pkg: "github.com/joern1811/ai/pkg/rest"
+              desc: "ports must not import the REST adapter (hexagonal architecture)"
+            - pkg: "github.com/joern1811/ai/pkg/cmd"
+              desc: "ports must not import the CLI adapter (hexagonal architecture)"
+        application-layer:
+          files:
+            - "**/pkg/core/service/**"
+          deny:
+            - pkg: "github.com/joern1811/ai/pkg/framework"
+              desc: "application must not import the framework/adapter layer (hexagonal architecture)"
+            - pkg: "github.com/joern1811/ai/pkg/rest"
+              desc: "application must not import the REST adapter (hexagonal architecture)"
+            - pkg: "github.com/joern1811/ai/pkg/cmd"
+              desc: "application must not import the CLI adapter (hexagonal architecture)"
 
   exclusions:
     rules:
