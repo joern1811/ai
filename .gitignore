@@ -110,3 +110,7 @@ testdata
 /dist/
 /completions/
 /inputs/
+
+# macOS
+.DS_Store
+**/.DS_Store
