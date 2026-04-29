@@ -5,7 +5,7 @@ import (
 
 	"github.com/sashabaranov/go-openai"
 
-	"github.com/joern1811/ai/pkg/core/domain"
+	"github.com/joern1811/ai/internal/core/domain"
 )
 
 type SpeachService struct {

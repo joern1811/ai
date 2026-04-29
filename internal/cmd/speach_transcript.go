@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/joern1811/ai/pkg/core/service"
+	"github.com/joern1811/ai/internal/core/service"
 )
 
 var speachTranscriptCmd = &cobra.Command{

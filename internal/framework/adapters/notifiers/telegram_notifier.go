@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/joern1811/ai/pkg/framework/adapters/utils"
+	"github.com/joern1811/ai/internal/framework/adapters/utils"
 )
 
 type TelegramConfig struct {

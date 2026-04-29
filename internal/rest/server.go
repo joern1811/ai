@@ -12,11 +12,11 @@ import (
 
 	_ "github.com/joho/godotenv/autoload"
 
-	"github.com/joern1811/ai/pkg/core/domain"
-	"github.com/joern1811/ai/pkg/core/ports"
-	"github.com/joern1811/ai/pkg/core/service"
-	adapters "github.com/joern1811/ai/pkg/framework/adapters/notifiers"
-	"github.com/joern1811/ai/pkg/framework/adapters/utils"
+	"github.com/joern1811/ai/internal/core/domain"
+	"github.com/joern1811/ai/internal/core/ports"
+	"github.com/joern1811/ai/internal/core/service"
+	adapters "github.com/joern1811/ai/internal/framework/adapters/notifiers"
+	"github.com/joern1811/ai/internal/framework/adapters/utils"
 )
 
 const uploadDir = "./uploads"

@@ -57,37 +57,37 @@ linters:
       rules:
         domain-layer:
           files:
-            - "**/pkg/core/domain/**"
+            - "**/internal/core/domain/**"
           deny:
-            - pkg: "github.com/joern1811/ai/pkg/core/service"
+            - pkg: "github.com/joern1811/ai/internal/core/service"
               desc: "domain must not import the application layer (hexagonal architecture)"
-            - pkg: "github.com/joern1811/ai/pkg/framework"
+            - pkg: "github.com/joern1811/ai/internal/framework"
               desc: "domain must not import the framework/adapter layer (hexagonal architecture)"
-            - pkg: "github.com/joern1811/ai/pkg/rest"
+            - pkg: "github.com/joern1811/ai/internal/rest"
               desc: "domain must not import the REST adapter (hexagonal architecture)"
-            - pkg: "github.com/joern1811/ai/pkg/cmd"
+            - pkg: "github.com/joern1811/ai/internal/cmd"
               desc: "domain must not import the CLI adapter (hexagonal architecture)"
         ports-layer:
           files:
-            - "**/pkg/core/ports/**"
+            - "**/internal/core/ports/**"
           deny:
-            - pkg: "github.com/joern1811/ai/pkg/core/service"
+            - pkg: "github.com/joern1811/ai/internal/core/service"
               desc: "ports must not depend on the application layer (hexagonal architecture)"
-            - pkg: "github.com/joern1811/ai/pkg/framework"
+            - pkg: "github.com/joern1811/ai/internal/framework"
               desc: "ports must not import the framework/adapter layer (hexagonal architecture)"
-            - pkg: "github.com/joern1811/ai/pkg/rest"
+            - pkg: "github.com/joern1811/ai/internal/rest"
               desc: "ports must not import the REST adapter (hexagonal architecture)"
-            - pkg: "github.com/joern1811/ai/pkg/cmd"
+            - pkg: "github.com/joern1811/ai/internal/cmd"
               desc: "ports must not import the CLI adapter (hexagonal architecture)"
         application-layer:
           files:
-            - "**/pkg/core/service/**"
+            - "**/internal/core/service/**"
           deny:
-            - pkg: "github.com/joern1811/ai/pkg/framework"
+            - pkg: "github.com/joern1811/ai/internal/framework"
               desc: "application must not import the framework/adapter layer (hexagonal architecture)"
-            - pkg: "github.com/joern1811/ai/pkg/rest"
+            - pkg: "github.com/joern1811/ai/internal/rest"
               desc: "application must not import the REST adapter (hexagonal architecture)"
-            - pkg: "github.com/joern1811/ai/pkg/cmd"
+            - pkg: "github.com/joern1811/ai/internal/cmd"
               desc: "application must not import the CLI adapter (hexagonal architecture)"
 
   exclusions:

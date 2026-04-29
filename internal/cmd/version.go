@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/joern1811/ai/pkg/version"
+	"github.com/joern1811/ai/internal/version"
 
 	"github.com/spf13/cobra"
 )
