@@ -2,13 +2,15 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/joern1811/ai/pkg/config"
-	_ "github.com/joho/godotenv"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"os"
 	"path/filepath"
 	"strings"
+
+	_ "github.com/joho/godotenv"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+
+	"github.com/joern1811/ai/pkg/config"
 )
 
 const (

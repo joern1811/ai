@@ -4,8 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/joern1811/ai/pkg/framework/adapters/utils"
 	"net/http"
+
+	"github.com/joern1811/ai/pkg/framework/adapters/utils"
 )
 
 type TelegramConfig struct {
@@ -23,7 +24,7 @@ func NewTelegramNotifier(config TelegramConfig) *TelegramNotifier {
 
 func (t TelegramNotifier) Notify(message string) error {
 	url := fmt.Sprintf("https://api.telegram.org/bot%s/sendMessage", t.Token)
-	body := map[string]interface{}{
+	body := map[string]any{
 		"chat_id": t.ChatID,
 		"text":    message,
 	}

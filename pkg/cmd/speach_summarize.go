@@ -2,11 +2,13 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/h2non/filetype"
-	"github.com/joern1811/ai/pkg/core/service"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"os"
+
+	"github.com/joern1811/ai/pkg/core/service"
 )
 
 var speachSummarizeCmd = &cobra.Command{

@@ -2,15 +2,17 @@ package rest
 
 import (
 	"fmt"
-	"github.com/joern1811/ai/pkg/core/domain"
-	"github.com/joern1811/ai/pkg/core/ports"
-	"github.com/joern1811/ai/pkg/core/service"
-	adapters "github.com/joern1811/ai/pkg/framework/adapters/notifiers"
-	_ "github.com/joho/godotenv/autoload"
 	"io"
 	"log"
 	"net/http"
 	"os"
+
+	_ "github.com/joho/godotenv/autoload"
+
+	"github.com/joern1811/ai/pkg/core/domain"
+	"github.com/joern1811/ai/pkg/core/ports"
+	"github.com/joern1811/ai/pkg/core/service"
+	adapters "github.com/joern1811/ai/pkg/framework/adapters/notifiers"
 )
 
 type Server struct {

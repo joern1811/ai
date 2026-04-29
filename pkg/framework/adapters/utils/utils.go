@@ -10,7 +10,7 @@ func CloseResource(c io.Closer, err *error) {
 		if *err == nil {
 			*err = cerr
 		} else {
-			*err = fmt.Errorf("%v; %v", *err, cerr)
+			*err = fmt.Errorf("%w; %w", *err, cerr)
 		}
 	}
 }

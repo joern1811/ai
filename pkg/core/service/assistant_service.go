@@ -2,10 +2,11 @@ package service
 
 import (
 	"context"
-	"github.com/pkg/errors"
-	"github.com/sashabaranov/go-openai"
 	"log"
 	"time"
+
+	"github.com/pkg/errors"
+	"github.com/sashabaranov/go-openai"
 )
 
 type AssistantService struct {

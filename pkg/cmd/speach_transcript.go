@@ -2,10 +2,12 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/joern1811/ai/pkg/core/service"
+	"os"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"os"
+
+	"github.com/joern1811/ai/pkg/core/service"
 )
 
 var speachTranscriptCmd = &cobra.Command{
