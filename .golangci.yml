@@ -1,0 +1,74 @@
+version: "2"
+
+run:
+  timeout: 3m
+
+linters:
+  default: standard
+  enable:
+    # Security
+    - gosec
+    - forcetypeassert   # find unguarded type assertions
+    # Correctness
+    - bodyclose
+    - noctx
+    - errorlint
+    - nilerr            # nil returned when error was checked
+    - fatcontext        # context in loops can cause memory leaks
+    # Database
+    - sqlclosecheck     # ensures pgx queries / sql.Rows are closed
+    - rowserrcheck      # ensures rows.Err() is checked
+    # Code quality
+    - gocritic
+    - revive
+    - unconvert
+    - misspell
+    - dupword           # catches duplicate words in comments
+    - usestdlibvars     # use http.StatusOK instead of 200, etc.
+    - modernize         # suggest modern Go patterns
+    # Logging
+    - loggercheck       # validates zap/slog structured logging calls
+    # Test quality
+    - testifylint       # validates testify usage patterns
+    - usetesting        # use testing package helpers
+
+  settings:
+    govet:
+      enable:
+        - shadow
+    gocritic:
+      enabled-tags:
+        - diagnostic
+        - performance
+      disabled-tags:
+        - style
+    revive:
+      rules:
+        - name: exported
+          disabled: true
+        - name: package-comments
+          disabled: true
+    misspell:
+      ignore-rules:
+        - speach
+
+  exclusions:
+    rules:
+      # Test files: allow http.NewRequest without context
+      - path: _test\.go
+        linters:
+          - noctx
+      # Test files: filepathJoin with separators is fine for test data
+      - path: _test\.go
+        text: filepathJoin
+        linters:
+          - gocritic
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  settings:
+    goimports:
+      local-prefixes:
+        - github.com/joern1811/ai
