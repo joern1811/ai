@@ -10,7 +10,7 @@
         "major"
       ],
       "matchBaseBranches": [
-        "develop"
+        "master"
       ],
       "enabled": false
     }
