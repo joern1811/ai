@@ -9,9 +9,6 @@
       "matchUpdateTypes": [
         "major"
       ],
-      "matchBaseBranches": [
-        "master"
-      ],
       "enabled": false
     }
   ],
