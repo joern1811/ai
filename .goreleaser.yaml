@@ -69,6 +69,7 @@ brews:
     repository:
       owner: joern1811
       name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
     commit_author:
       name: Jörn Dombrowski
       email: joern.dombrowski@gmail.com
